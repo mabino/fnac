@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: darkslategray;
+    }
+
+    #lever {
+      width: 100px;
+      height: 300px;
+      background-color: #ccc;
+      position: relative;
+      cursor: pointer;
+    }
+
+    #indicator {
+      width: 50px;
+      height: 50px;
+      background-color: green;
+      border-radius: 50%;
+      position: absolute;
+      top: 20px;
+      left: 25px;
+    }
+  </style>
+</head>
+<body>
+  <div id="lever" onclick="handleIndicatorClick()">
+    <div id="indicator"></div>
+  </div>
+
+  <audio id="warningSound" src="warning.mp3"></audio>
+
+  <script>
+    const indicator = document.getElementById('indicator');
+    const warningSound = document.getElementById('warningSound');
+    let interval;
+    let endTime;
+
+    // Function to reset the indicator to green
+    function resetIndicator() {
+      clearInterval(interval);
+      indicator.style.backgroundColor = 'green';
+      stopWarningSound();
+      startRandomInterval();
+    }
+
+    // Function to start a random interval to turn the indicator red
+    function startRandomInterval() {
+      const minTime = 2 * 60 * 1000; // 3 minutes in milliseconds
+      const maxTime = 7 * 60 * 1000; // 10 minutes in milliseconds
+
+      endTime = Date.now() + Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
+
+      interval = setInterval(() => {
+        indicator.style.backgroundColor = 'red';
+        playWarningSound();
+      }, endTime - Date.now());
+    }
+
+    // Function to play the warning sound
+    function playWarningSound() {
+      // Check if the warning sound element is supported and not null
+      if (warningSound && typeof warningSound.play === 'function') {
+        warningSound.play();
+      }
+    }
+
+    // Function to stop playing the warning sound
+    function stopWarningSound() {
+      // Check if the warning sound element is supported and not null
+      if (warningSound && typeof warningSound.pause === 'function') {
+        warningSound.pause();
+        warningSound.currentTime = 0;
+      }
+    }
+
+    // Function to handle click on the indicator
+    function handleIndicatorClick() {
+      if (indicator.style.backgroundColor === 'red') {
+        resetIndicator();
+      }
+    }
+
+    // Initial setup
+    startRandomInterval();
+
+    // Function to check remaining time in the console
+  // Function to check remaining time in the console
+function checkRemainingTime() {
+  const remainingTime = endTime - Date.now();
+
+  if (remainingTime <= 0) {
+    clearInterval(interval);
+    indicator.style.backgroundColor = 'red';
+    playWarningSound();
+    startRandomInterval(); // Restart the interval immediately
+  } else {
+    console.log(remainingTime);
+  }
+}
+
+  </script>
+</body>
+</html>
+
